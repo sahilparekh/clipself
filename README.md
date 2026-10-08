@@ -92,3 +92,7 @@ The tests cover recency, retention, old-history migration, binary persistence, b
 The scripts compile directly with the Swift compiler and keep module caches in the project. A Swift package is also included for IDE use. The app bundle is signed locally with an ad-hoc signature. Distribution to other Macs would need Developer ID signing and notarization.
 
 The application icon is included in `Assets/AppIcon.icns`. Its transparent source artwork and generation prompt are retained in `Assets/`; `build-icon.sh` rebuilds the native iconset.
+
+## License
+
+[MIT](LICENSE) © 2026 Sahil Parekh.
