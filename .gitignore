@@ -1,0 +1,37 @@
+# Swift build products and local app bundles
+.build/
+.swiftpm/
+dist/
+DerivedData/
+*.dSYM/
+*.xcarchive/
+
+# Local editor and macOS files
+.DS_Store
+.AppleDouble
+._*
+.idea/
+.vscode/
+*.xcuserstate
+xcuserdata/
+*.swp
+*.swo
+*~
+
+# Python tooling
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.mobileprovision
+
+# Clipboard history and runtime state must stay local
+history.json
+runtime.json
+*.log
