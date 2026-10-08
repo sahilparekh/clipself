@@ -1,0 +1,54 @@
+name: Build and publish macOS release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check release version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          version="$(tr -d '[:space:]' < VERSION)"
+          test "$RELEASE_TAG" = "v$version"
+
+      - name: Run history and clipboard checks
+        run: ./scripts/test.sh
+
+      - name: Build universal app and package download
+        run: ./scripts/package-release.sh
+
+      - name: Publish preview release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          version="$(tr -d '[:space:]' < VERSION)"
+          notes="docs/releases/$RELEASE_TAG.md"
+          if [ ! -f "$notes" ]; then
+            echo "ClipShelf $version: download the macOS universal ZIP to install. This preview is not Developer ID signed or notarized. See the README for first-launch instructions." > dist/release-notes.md
+            notes=dist/release-notes.md
+          fi
+          gh release create "$RELEASE_TAG" \
+            "dist/ClipShelf-$version-macOS-universal.zip" \
+            "dist/ClipShelf-$version-macOS-universal.zip.sha256" \
+            --verify-tag --title "ClipShelf $version" \
+            --notes-file "$notes" --prerelease

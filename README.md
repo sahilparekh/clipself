@@ -37,7 +37,15 @@ I’m keeping it deliberately simple and improving it as I use it. I hope it’s
 | **⌘S** in history | Export the current or selected clips |
 | **⌘Q** in history | Quit ClipShelf |
 
-## Run
+## Download and install
+
+Download the **macOS universal ZIP** from [GitHub Releases](https://github.com/sahilparekh/clipself/releases). It includes the app for **Apple Silicon and Intel Macs**, and requires **macOS 13 or later**. You do not need Swift or build tools.
+
+Extract the ZIP, drag `ClipShelf.app` into **Applications**, and open it. ClipShelf runs in the menu bar; copy a few items normally, then use **⌘⌥↑ / ↓** to cycle.
+
+The first downloadable builds are previews with an ad-hoc signature. They are **not Developer ID signed or notarized by Apple**, so macOS may block the first launch. If you trust the download, after trying to open it, use **System Settings → Privacy & Security → Open Anyway** for this app. See [Apple’s instructions](https://support.apple.com/en-us/102445).
+
+## Build from source
 
 Requires **macOS 13 or later** and Apple’s Swift Command Line Tools. There are no third-party runtime dependencies or cloud services. The Python 3 fallback icon packer is only used if the native icon converter is unavailable.
 
@@ -85,6 +93,7 @@ No Accessibility permission is required: the app prepares the clipboard and you 
 ./scripts/test.sh
 ./scripts/render-preview.sh
 ./scripts/build-icon.sh
+./scripts/package-release.sh
 ```
 
 The tests cover recency, retention, old-history migration, binary persistence, both cycle directions, and mixed exports without overwriting files. A separate named pasteboard checks file/image/PDF round trips without touching your normal clipboard. That check is reported as skipped if the environment blocks the macOS pasteboard service.
@@ -92,6 +101,10 @@ The tests cover recency, retention, old-history migration, binary persistence, b
 The scripts compile directly with the Swift compiler and keep module caches in the project. A Swift package is also included for IDE use. The app bundle is signed locally with an ad-hoc signature. Distribution to other Macs would need Developer ID signing and notarization.
 
 The application icon is included in `Assets/AppIcon.icns`. Its transparent source artwork and generation prompt are retained in `Assets/`; `build-icon.sh` rebuilds the native iconset.
+
+## Publishing a release
+
+Set `VERSION`, add release notes under `docs/releases/v<VERSION>.md`, commit the changes, and push a matching `v<VERSION>` Git tag. The GitHub Actions release workflow runs the checks, compiles both architectures, and publishes the installable ZIP and SHA-256 checksum as a preview release. Developer ID signing and notarization are not configured yet.
 
 ## License
 
